@@ -13,7 +13,7 @@ object Invoice {
   private val AjusteDeIofTitleRE = """IOF de "(.+)"""".r
 
   def parseCsv(filePath: String): Seq[InvoiceEntry] = {
-    val lines = Source.fromFile(filePath).getLines()
+    val lines = Source.fromFile(filePath, "UTF-8").getLines()
     val header = lines.next()
     assert(header == "date,category,title,amount")
 

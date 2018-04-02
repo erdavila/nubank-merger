@@ -134,7 +134,7 @@ object History {
   }
 
   def parse(filePath: String, year: Int): Seq[HistoryEntry] = {
-    val lines = Source.fromFile(filePath).getLines()
+    val lines = Source.fromFile(filePath, "UTF-8").getLines()
     val parser = new Parser(lines)
     val rawEntries = parser.parse()
 
