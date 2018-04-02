@@ -1,1 +1,9 @@
+.cache-main
+.classpath
+.project
+.pydevproject
+.settings/
+/bin/
 data/
+project/
+target/
