@@ -41,13 +41,16 @@ object History {
     private object Regular {
       private val Categories = Set[String](
         "casa",
+        "educação",
         "eletrônicos",
         "lazer",
+        "outros",
         "restaurante",
         "saúde",
         "serviços",
         "supermercado",
         "transporte",
+        "vestuário",
       )
 
       def unapply(category: String): Option[String] = Categories.find(_ == category)
