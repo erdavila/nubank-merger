@@ -15,6 +15,8 @@ object History {
 
   class Parser(lines: Iterator[String]) {
 
+    private val numberedLines = lines.zipWithIndex map { case (s, n) => (s, n + 1) }
+
     case class HistoryRawEntry(category: String, title: String, amount: Option[Amount], date: MonthDay)
 
     private object Skippable {
@@ -65,11 +67,12 @@ object History {
 
     @tailrec
     final def parse(accumulator: Seq[HistoryRawEntry] = Seq.empty): Seq[HistoryRawEntry] = {
-      if (lines.hasNext) {
-        val entry = lines.next() match {
-          case Skippable(numLines) => skip(numLines)
-          case Rewards(category) => parseRewards(category)
-          case Regular(category) => parseRegular(category)
+      if (numberedLines.hasNext) {
+        val entry = numberedLines.next() match {
+          case (Skippable(numLines), _) => skip(numLines)
+          case (Rewards(category), _) => parseRewards(category)
+          case (Regular(category), _) => parseRegular(category)
+          case (line, n) => sys.error(s"""Unrecognized line "$line" at $n""")
         }
         parse(entry.toSeq ++ accumulator)
       } else {
@@ -78,17 +81,17 @@ object History {
     }
 
     private def skip(numLines: Int): None.type = {
-      for (_ <- 1 to numLines) { lines.next() }
+      for (_ <- 1 to numLines) { numberedLines.next() }
       None
     }
 
     private def parseRewards(category: String): Option[HistoryRawEntry] = {
-      val title = lines.next()
+      val (title, _) = numberedLines.next()
       val amount = title match {
         case RewardsSubscriptionCanceledTitle => None
         case RewardsCreditTitleRE(amountStr) => Some(-parseAmount(amountStr))
       }
-      val dateStr = lines.next()
+      val (dateStr, _) = numberedLines.next()
       val date = parseMonthDay(dateStr)
 
       val entry = HistoryRawEntry(category, title, amount, date)
@@ -96,13 +99,13 @@ object History {
     }
 
     private def parseRegular(category: String): Option[HistoryRawEntry] = {
-      val title = lines.next()
-      val amount = parseAmount(lines.next())
+      val (title, _) = numberedLines.next()
+      val amount = parseAmount(numberedLines.next() match { case (line, _) => line })
 
       val dateStr = {
-        val line = lines.next()
+        val (line, _) = numberedLines.next()
         if (isForeignCurrency(line)) {
-          lines.next()
+          numberedLines.next() match { case (ln, _) => ln }
         } else {
           line
         }
