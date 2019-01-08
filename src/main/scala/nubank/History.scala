@@ -53,6 +53,7 @@ object History {
         "supermercado",
         "transporte",
         "vestuário",
+        "viagem",
       )
 
       def unapply(category: String): Option[String] = Categories.find(_ == category)
