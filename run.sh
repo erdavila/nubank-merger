@@ -1,16 +1,19 @@
 #!/bin/bash
 if [[ -z $2 ]] ; then
-	echo "Use arguments: $0 INVOICE.csv HISTORY.txt"
+	echo "Use arguments: $0 YEAR MONTH"
+	echo "  Reads files:"
+	echo "    data/YEAR/nubank-YEAR-MONTH.csv"
+	echo "    data/YEAR/history-YEAR-MONTH.txt"
+	echo "  YEAR must be 4-digit."
+	echo "  MONTH must be 2-digit."
 	exit 1
-fi
+fi >&2
 
-INVOICE=$1
-HISTORY=$2
+YEAR=$1
+MONTH=$2
 
-if which cygpath>/dev/null ; then
-    INVOICE=$(cygpath -w ${INVOICE})
-    HISTORY=$(cygpath -w ${HISTORY})
-fi
+INVOICE=data/$YEAR/nubank-$YEAR-$MONTH.csv
+HISTORY=data/$YEAR/history-$YEAR-$MONTH.txt
 
 # Command to generate the JAR file:
 #   $ sbt package
