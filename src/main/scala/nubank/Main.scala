@@ -10,7 +10,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val Array(invoiceFile, historyFile) = args.take(2)
     val invoice = Invoice.parseCsv(invoiceFile)
-    val history = History.parse(historyFile, 2018)
+    val history = History.parse(historyFile, 2019)
 
     Merger.merge(invoice, history) match {
       case Some(newInvoice) =>

@@ -20,7 +20,7 @@ object Invoice {
     val entries = for {
       line <- lines.toSeq
       Array(dateStr, category, title, amountStr) = line.split(",", 4)
-      if category != "Pagamento" || title != "Pagamento recebido"
+      if (category != "Pagamento" && category != "") || title != "Pagamento recebido"
     } yield {
       val date = LocalDate.parse(dateStr)
       val amount = parseAmount(amountStr)
